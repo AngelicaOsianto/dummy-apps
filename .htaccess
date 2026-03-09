@@ -1,0 +1,18 @@
+# .htaccess — Keamanan server redirect PoC
+
+# Blokir akses ke .env dan log
+<FilesMatch "^\.env|access\.log$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Blokir akses langsung ke folder logs
+    RewriteRule ^logs/ - [F,L]
+</IfModule>
+
+# Paksa HTTPS
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login — Dummy App PoC Unhas</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--red:#c0392b;--gold:#d4a017;--gold2:#f0c040;
+  --bg:#f0ece3;--white:#fff;--border:#ddd6ca;--text:#1c1a17;--muted:#7a7060}
+*,::before,::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px}
+.card{background:var(--white);border-radius:16px;padding:40px 36px;
+  width:100%;max-width:420px;box-shadow:0 4px 28px rgba(0,0,0,.08);
+  border-top:4px solid var(--red);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:-60px;right:-60px;
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(192,57,43,.08),transparent 70%)}
+.logo{display:flex;flex-direction:column;align-items:center;margin-bottom:28px}
+.logo-mark{width:56px;height:56px;border-radius:14px;
+  background:linear-gradient(135deg,var(--red),#e74c3c);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:800;color:var(--gold2);margin-bottom:10px;
+  box-shadow:0 4px 14px rgba(192,57,43,.3)}
+.logo-title{font-size:20px;font-weight:800;letter-spacing:-.4px}
+.logo-sub{font-size:11px;color:var(--muted);margin-top:2px;text-align:center;line-height:1.4}
+.poc-badge{display:inline-block;padding:3px 10px;border-radius:12px;
+  font-size:9px;font-weight:700;background:#fef9e7;color:var(--gold);
+  border:1px solid rgba(212,160,23,.3);margin-top:6px;font-family:'JetBrains Mono',monospace}
+
+/* SSO Button */
+.sso-btn{display:flex;align-items:center;gap:12px;width:100%;
+  padding:13px 16px;border-radius:10px;border:1.5px solid rgba(192,57,43,.25);
+  background:rgba(192,57,43,.03);cursor:pointer;transition:.2s;
+  font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:10px}
+.sso-btn:hover{border-color:var(--red);background:rgba(192,57,43,.06);
+  transform:translateY(-1px);box-shadow:0 4px 12px rgba(192,57,43,.12)}
+.sso-icon{width:40px;height:40px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:20px}
+.sso-icon.red{background:var(--red);color:var(--gold2)}
+.sso-name{font-size:13px;font-weight:700;color:var(--text);text-align:left}
+.sso-desc{font-size:11px;color:var(--muted);margin-top:1px;text-align:left}
+.sso-arrow{margin-left:auto;color:var(--muted);font-size:16px}
+
+/* How it works */
+.how-box{background:#fffbf0;border:1px solid rgba(212,160,23,.25);
+  border-radius:8px;padding:12px 14px;font-size:11px;color:var(--muted);
+  line-height:1.7;margin:14px 0}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;
+  font-size:11px;color:var(--muted)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Form */
+.form-group{margin-bottom:13px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+.form-input{width:100%;padding:10px 13px;background:#f7f5f0;
+  border:1px solid var(--border);border-radius:8px;font-size:13px;
+  font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);
+  outline:none;transition:.2s}
+.form-input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.08)}
+.btn-login{width:100%;padding:12px;background:var(--text);border:none;
+  border-radius:8px;color:#fff;font-size:14px;font-weight:700;
+  cursor:pointer;transition:.2s;font-family:'Plus Jakarta Sans',sans-serif;margin-top:4px}
+.btn-login:hover{background:var(--red);transform:translateY(-1px);
+  box-shadow:0 4px 16px rgba(192,57,43,.25)}
+.error{background:#fdecea;border:1px solid rgba(192,57,43,.3);border-radius:7px;
+  padding:9px 13px;font-size:12px;color:var(--red);margin-bottom:12px;display:none}
+.form-footer{margin-top:14px;text-align:center;font-size:11px;color:var(--muted);line-height:1.6}
+
+/* Loading overlay */
+#loading{position:fixed;inset:0;background:rgba(192,57,43,.95);
+  display:none;flex-direction:column;align-items:center;justify-content:center;z-index:999}
+#loading.show{display:flex}
+.loading-logo{font-size:48px;font-weight:800;color:var(--gold2);letter-spacing:-2px;margin-bottom:12px}
+.loading-text{font-size:14px;color:rgba(255,255,255,.85);margin-bottom:20px}
+.loading-bar{width:200px;height:3px;background:rgba(255,255,255,.2);border-radius:10px;overflow:hidden}
+.loading-fill{height:100%;background:var(--gold2);border-radius:10px;animation:loadfill .8s ease forwards}
+@keyframes loadfill{from{width:0}to{width:100%}}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="loading-logo">D</div>
+  <div class="loading-text">Memproses SSO via Super Apps...</div>
+  <div class="loading-bar"><div class="loading-fill"></div></div>
+</div>
+
+<div class="card">
+  <div class="logo">
+    <div class="logo-mark">D</div>
+    <div class="logo-title">Dummy App PoC</div>
+    <div class="logo-sub">Universitas Hasanuddin<br>Uji Coba Integrasi Super Apps TKI</div>
+    <span class="poc-badge">⚗ PROOF OF CONCEPT</span>
+  </div>
+
+  <!-- SSO BUTTON -->
+  <button class="sso-btn" onclick="loginSSO()">
+    <div class="sso-icon red">⚡</div>
+    <div>
+      <div class="sso-name">Masuk via Super Apps (TKI)</div>
+      <div class="sso-desc">Login otomatis dari menu Super Apps — tanpa password</div>
+    </div>
+    <div class="sso-arrow">›</div>
+  </button>
+
+  <!-- CARA KERJA -->
+  <div class="how-box">
+    💡 <strong style="color:#1a1a1a">Cara kerjanya:</strong> Buka aplikasi ini dari <strong>menu Super Apps</strong>.
+    Super Apps akan otomatis mengirimkan token ke server kami. Server memvalidasi token ke Gateway TKI,
+    lalu Anda langsung masuk tanpa input password. Super Apps <em>tidak pernah</em> menerima password Anda.
+  </div>
+
+  <div class="divider">atau login manual (demo)</div>
+
+  <div class="error" id="err-msg">Username atau password salah.</div>
+  <div class="form-group">
+    <label class="form-label">Username / NIM</label>
+    <input class="form-input" type="text" id="inp-user" placeholder="Contoh: admin" autocomplete="username">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Password</label>
+    <input class="form-input" type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password">
+  </div>
+  <button class="btn-login" onclick="loginManual()">Masuk ke Dummy App</button>
+
+  <div class="form-footer">
+    Demo: username <strong>admin</strong> / password <strong>demo123</strong><br>
+    Untuk uji coba SSO: klik menu dari dalam Super Apps.
+  </div>
+</div>
+
+<script>
+function getCookie(name) {
+  const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return v ? decodeURIComponent(v.pop()) : null;
+}
+
+// Auto-redirect jika sudah ada cookie aktif
+if (getCookie('tki_auth') === '1') {
+  window.location.href = 'dashboard.php';
+}
+
+function loginSSO() {
+  // Tombol ini hanya untuk simulasi lokal.
+  // Alur nyata: user klik menu di Super Apps → Super Apps inject token ke URL redirect.php
+  const msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);' +
+    'background:#1a1a1a;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;z-index:999';
+  msg.textContent = '⚡ Buka aplikasi ini dari menu Super Apps untuk SSO otomatis.';
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 4000);
+}
+
+function loginManual() {
+  const u = document.getElementById('inp-user').value.trim();
+  const p = document.getElementById('inp-pass').value;
+  const err = document.getElementById('err-msg');
+  err.style.display = 'none';
+
+  if (!u || !p) {
+    err.textContent = 'Isi semua field.';
+    err.style.display = 'block';
+    return;
+  }
+
+  if (u === 'admin' && p === 'demo123') {
+    document.getElementById('loading').classList.add('show');
+    // Simulasi cookie untuk demo manual
+    const exp = new Date(Date.now() + 3600000).toUTCString();
+    document.cookie = `tki_auth=1;expires=${exp};path=/`;
+    document.cookie = `tki_user_id=demo-manual-001;expires=${exp};path=/`;
+    document.cookie = `tki_no_id=DEMO123;expires=${exp};path=/`;
+    document.cookie = `tki_company_id=DEMO-COMPANY;expires=${exp};path=/`;
+    document.cookie = `tki_user_type=DEMO;expires=${exp};path=/`;
+    document.cookie = `tki_login_time=${Math.floor(Date.now()/1000)};expires=${exp};path=/`;
+    setTimeout(() => window.location.href = 'dashboard.php?sso=ok&src=manual', 1000);
+  } else {
+    err.textContent = 'Username/password salah. Demo: admin / demo123';
+    err.style.display = 'block';
+  }
+}
+
+// Enter key support
+document.addEventListener('keypress', e => {
+  if (e.key === 'Enter') loginManual();
+});
+</script>
+</body>
+</html>
