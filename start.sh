@@ -1,4 +1,2 @@
-[phases.build]
-cmds = []
-[start]
-cmd = "php -S 0.0.0.0:$PORT"
+#!/bin/bash
+php -S 0.0.0.0:$PORT
