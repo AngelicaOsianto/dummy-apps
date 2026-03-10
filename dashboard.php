@@ -323,7 +323,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </div>
 
 <script>
-// ── Cookie Inspector ─────────────────────────────────────────
+// Cookie Inspector 
 function getCookies() {
   const cookies = document.cookie.split(';').map(c => c.trim());
   const tki = cookies.filter(c => c.startsWith('tki_'));
@@ -342,7 +342,7 @@ function getCookies() {
 }
 getCookies();
 
-// ── Countdown timer ──────────────────────────────────────────
+// Countdown timer
 const expiresAt = <?= $expires_at ?> * 1000;
 function updateCountdown() {
   const remaining = Math.max(0, expiresAt - Date.now());
@@ -363,7 +363,7 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-// ── Logout ────────────────────────────────────────────────────
+// Logout
 function doLogout() {
   ['tki_auth','tki_user_id','tki_no_id','tki_company_id','tki_user_type','tki_login_time']
     .forEach(n => {

@@ -22,7 +22,7 @@ if (!empty($_SESSION['tki_user_id']) && time() < ($_SESSION['tki_expires'] ?? 0)
     return;
 }
 
-// 2. Cek cookie TKI
+// 2. Cek cookie SUPER APPS
 if (($_COOKIE['tki_auth'] ?? '') === '1' && !empty($_COOKIE['tki_user_id'])) {
     $_SESSION['tki_user_id']    = $_COOKIE['tki_user_id'];
     $_SESSION['tki_no_id']      = $_COOKIE['tki_no_id']      ?? '';
