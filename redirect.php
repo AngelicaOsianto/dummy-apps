@@ -261,7 +261,7 @@ function validate_tki_token(
     $response = curl_exec($ch);
     $curl_err = curl_error($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+   
 
     if ($curl_err || $response === false) {
         error_log('[TKI-Redirect] cURL error: ' . $curl_err);
