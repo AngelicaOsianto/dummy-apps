@@ -51,8 +51,8 @@ $DUMMY_APP_URL      = $_ENV['DUMMY_APP_URL']      ?? '/dashboard.php';
  *   - path   = /child_domain atau /sub_domain
  */
 $REDIRECT_MAP = [
-    // Kode 99 = PoC Dummy App (Railway)
-    '99' => [
+    // Kode 01 = PoC Dummy App (Railway)
+    '01' => [
         'url'    => $DUMMY_APP_URL,
         'domain' => $_ENV['COOKIE_DOMAIN'] ?? '',  // kosong = domain saat ini
         'path'   => '/',
