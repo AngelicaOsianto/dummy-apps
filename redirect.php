@@ -34,6 +34,8 @@ $TKI_API_KEY        = $_ENV['TKI_API_KEY']        ?? '';
 $TKI_BASIC_USERNAME = $_ENV['TKI_BASIC_USERNAME'] ?? '';
 $TKI_BASIC_PASSWORD = $_ENV['TKI_BASIC_PASSWORD'] ?? '';
 $APP_ENV            = $_ENV['APP_ENV']            ?? 'sandbox';
+$TKI_COMPANY_ID     = $_ENV['TKI_COMPANY_ID']     ?? '';
+
 $COOKIE_TTL         = (int)($_ENV['COOKIE_TTL']   ?? 3600);
 $DUMMY_APP_URL      = $_ENV['DUMMY_APP_URL']      ?? '/dashboard.php';
 
