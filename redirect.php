@@ -31,14 +31,14 @@ if (file_exists($env_file)) {
 // ── KONFIGURASI ──────────────────────────────────────────────
 $TKI_VALIDATE_URL   = $_ENV['TKI_VALIDATE_URL']   ?? 'https://api.stg.solusinegeri.com/gateway/api/authentication/one-time-access-token_with_auth/validate';
 $TKI_API_KEY        = $_ENV['TKI_API_KEY']        ?? '';
+$TKI_INBOUND_TOKEN  = $_ENV['TKI_INBOUND_TOKEN']  ?? ''; // token untuk request KE TKI (dari Solusi Negeri)
+$TKI_OUTBOUND_TOKEN = $_ENV['TKI_OUTBOUND_TOKEN'] ?? ''; // token dari TKI ke kita — untuk verifikasi request masuk
 $TKI_BASIC_USERNAME = $_ENV['TKI_BASIC_USERNAME'] ?? '';
 $TKI_BASIC_PASSWORD = $_ENV['TKI_BASIC_PASSWORD'] ?? '';
 $APP_ENV            = $_ENV['APP_ENV']            ?? 'staging';
 $TKI_COMPANY_ID     = $_ENV['TKI_COMPANY_ID']     ?? '';
-
 $COOKIE_TTL         = (int)($_ENV['COOKIE_TTL']   ?? 3600);
-$DUMMY_APP_URL      = $_ENV['DUMMY_APP_URL']      ?? 'https://dummy-apps-production.up.railway.app/dashboard.php
-';
+$DUMMY_APP_URL      = $_ENV['DUMMY_APP_URL']      ?? 'https://dummy-apps-production.up.railway.app/dashboard.php';
 
 /**
  * PETA REDIRECT
@@ -87,6 +87,22 @@ $REDIRECT_MAP = [
     // ],
 ];
 
+// ── VALIDASI OUTBOUND TOKEN ───────────────────────────────────
+// Memastikan request benar-benar datang dari Super Apps TKI
+// Aktifkan setelah Solusi Negeri konfirmasi nama header yang dipakai
+//
+// $incoming_outbound = $_SERVER['HTTP_X_OUTBOUND_TOKEN']
+//                   ?? $_SERVER['HTTP_X_API_KEY']
+//                   ?? '';
+// if (!empty($TKI_OUTBOUND_TOKEN) && $incoming_outbound !== $TKI_OUTBOUND_TOKEN) {
+//     render_error(403, 'Request Tidak Sah',
+//         'Request tidak berasal dari Super Apps TKI.',
+//         'Hubungi Tim IT Unhas.',
+//         $APP_ENV
+//     );
+//     exit;
+// }
+
 // ── AMBIL PARAMETER ──────────────────────────────────────────
 $redirect_to    = trim($_GET['redirect_to']           ?? '');
 $one_time_token = trim($_GET['one_time_access_token'] ?? '');
@@ -114,11 +130,14 @@ if (!isset($REDIRECT_MAP[$redirect_to])) {
 $target = $REDIRECT_MAP[$redirect_to];
 
 // ── LANGKAH 2: VALIDASI TOKEN KE GATEWAY TKI ────────────────
+// Gunakan TKI_INBOUND_TOKEN jika ada, fallback ke TKI_API_KEY
+$auth_token = !empty($TKI_INBOUND_TOKEN) ? $TKI_INBOUND_TOKEN : $TKI_API_KEY;
+
 $result = validate_tki_token(
     $TKI_VALIDATE_URL,
     $one_time_token,
     $identifier,
-    $TKI_API_KEY,
+    $auth_token,
     $TKI_BASIC_USERNAME,
     $TKI_BASIC_PASSWORD
 );
@@ -261,10 +280,10 @@ function validate_tki_token(
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     }
 
-    $response = curl_exec($ch);
-    $curl_err = curl_error($ch);
+    $response  = curl_exec($ch);
+    $curl_err  = curl_error($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-   
+    curl_close($ch);
 
     if ($curl_err || $response === false) {
         error_log('[TKI-Redirect] cURL error: ' . $curl_err);
