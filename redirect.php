@@ -52,7 +52,7 @@ $DUMMY_APP_URL      = $_ENV['DUMMY_APP_URL']      ?? '/dashboard.php';
  */
 $REDIRECT_MAP = [
     // Kode 99 = PoC Dummy App (Railway)
-    '05' => [
+    '99' => [
         'url'    => $DUMMY_APP_URL,
         'domain' => $_ENV['COOKIE_DOMAIN'] ?? '',  // kosong = domain saat ini
         'path'   => '/',
