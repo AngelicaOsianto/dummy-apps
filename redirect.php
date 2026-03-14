@@ -33,7 +33,7 @@ $TKI_VALIDATE_URL   = $_ENV['TKI_VALIDATE_URL']   ?? 'https://api.stg.solusinege
 $TKI_API_KEY        = $_ENV['TKI_API_KEY']        ?? '';
 $TKI_BASIC_USERNAME = $_ENV['TKI_BASIC_USERNAME'] ?? '';
 $TKI_BASIC_PASSWORD = $_ENV['TKI_BASIC_PASSWORD'] ?? '';
-$APP_ENV            = $_ENV['APP_ENV']            ?? 'sandbox';
+$APP_ENV            = $_ENV['APP_ENV']            ?? 'staging';
 $TKI_COMPANY_ID     = $_ENV['TKI_COMPANY_ID']     ?? '';
 
 $COOKIE_TTL         = (int)($_ENV['COOKIE_TTL']   ?? 3600);
