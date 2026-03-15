@@ -29,7 +29,7 @@ if (file_exists($env_file)) {
 }
 
 // ── KONFIGURASI ──────────────────────────────────────────────
-$TKI_VALIDATE_URL   = $_ENV['TKI_VALIDATE_URL']   ?? 'TKI_VALIDATE_URL=https://api.solusinegeri.com/gateway/api/authentication/one-time-access-token/MEMBER/validate';
+$TKI_VALIDATE_URL   = $_ENV['TKI_VALIDATE_URL']   ?? 'https://api.solusinegeri.com/gateway/api/authentication/one-time-access-token/MEMBER/validate';
 $TKI_API_KEY        = $_ENV['TKI_API_KEY']        ?? '';
 $TKI_INBOUND_TOKEN  = $_ENV['TKI_INBOUND_TOKEN']  ?? ''; // token untuk request KE TKI (dari Solusi Negeri)
 $TKI_OUTBOUND_TOKEN = $_ENV['TKI_OUTBOUND_TOKEN'] ?? ''; // token dari TKI ke kita — untuk verifikasi request masuk
