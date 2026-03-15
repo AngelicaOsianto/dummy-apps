@@ -255,9 +255,9 @@ function validate_tki_token(
     string $basic_pass = ''
 ): ?array {
 
-    $payload = json_encode([
-    'token'      => $token,
-    'identifier' => $identifier,
+$payload = json_encode([
+    'one_time_access_token' => $token,
+    'identifier'            => $identifier,
 ]);
 
     $headers = ['Content-Type: application/json', 'Accept: application/json'];
