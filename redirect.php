@@ -133,6 +133,8 @@ $target = $REDIRECT_MAP[$redirect_to];
 // Gunakan TKI_INBOUND_TOKEN jika ada, fallback ke TKI_API_KEY
 $auth_token = !empty($TKI_INBOUND_TOKEN) ? $TKI_INBOUND_TOKEN : $TKI_API_KEY;
 
+error_log('[TKI-Debug] username=' . $TKI_BASIC_USERNAME . ' | pass_length=' . strlen($TKI_BASIC_PASSWORD) . ' | url=' . $TKI_VALIDATE_URL);
+
 $result = validate_tki_token(
     $TKI_VALIDATE_URL,
     $one_time_token,
