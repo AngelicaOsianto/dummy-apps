@@ -28,6 +28,12 @@ if (file_exists($env_file)) {
     }
 }
 
+// Pastikan folder logs tersedia
+$log_dir = __DIR__ . '/logs';
+if (!is_dir($log_dir)) {
+    mkdir($log_dir, 0755, true);
+}
+
 // ── KONFIGURASI ──────────────────────────────────────────────
 $TKI_VALIDATE_URL   = $_ENV['TKI_VALIDATE_URL']   ?? 'https://api.stg.solusinegeri.com/gateway/api/authentication/one-time-access-token_with_auth/validate';
 $TKI_API_KEY        = $_ENV['TKI_API_KEY']        ?? '';
@@ -39,7 +45,7 @@ $TKI_COMPANY_ID     = $_ENV['TKI_COMPANY_ID']     ?? '';
 $COOKIE_TTL         = (int)($_ENV['COOKIE_TTL']   ?? 3600);
 $DUMMY_APP_URL      = $_ENV['DUMMY_APP_URL']      ?? '/dashboard.php';
 
-/**
+/** 
  * PETA REDIRECT
  * Kode → [url tujuan, cookie domain, cookie path, label]
  *
@@ -51,12 +57,12 @@ $DUMMY_APP_URL      = $_ENV['DUMMY_APP_URL']      ?? '/dashboard.php';
  *   - path   = /child_domain atau /sub_domain
  */
 $REDIRECT_MAP = [
-    // Kode 99 = PoC Dummy App (Railway)
-    '99' => [
+    // Kode 05 = PoC DOSAN Super Apps
+    '05' => [
         'url'    => $DUMMY_APP_URL,
         'domain' => $_ENV['COOKIE_DOMAIN'] ?? '',  // kosong = domain saat ini
         'path'   => '/',
-        'label'  => 'Dummy App PoC',
+        'label'  => 'DOSAN App Surat PoC',
     ],
 
     // Produksi — aktifkan setelah PoC berhasil:
@@ -90,6 +96,11 @@ $REDIRECT_MAP = [
 $redirect_to    = trim($_GET['redirect_to']           ?? '');
 $one_time_token = trim($_GET['one_time_access_token'] ?? '');
 $identifier     = trim($_GET['identifier']            ?? '');
+
+// Debug log request dari Super Apps
+error_log(
+    "[TKI-Redirect] Request redirect_to={$redirect_to} token={$one_time_token} identifier={$identifier}"
+);
 
 // ── VALIDASI PARAMETER ───────────────────────────────────────
 if (empty($redirect_to) || empty($one_time_token) || empty($identifier)) {
@@ -199,7 +210,7 @@ $cookie_opts = [
     'expires'  => time() + $COOKIE_TTL,
     'path'     => $target['path'],    // dari REDIRECT_MAP
     'domain'   => $target['domain'],  // dari REDIRECT_MAP
-    'secure'   => isset($_SERVER['HTTPS']),
+    'secure' => true, // hanya kirim cookie lewat HTTPS
     'httponly' => true,
     'samesite' => 'Lax',
 ];
@@ -215,6 +226,17 @@ setcookie('tki_login_time', (string)time(),   $cookie_opts);
 log_access($user_id, $no_id, $company_id, $redirect_to, $target['label'], $target['url']);
 
 // ── LANGKAH 6: REDIRECT ───────────────────────────────────────
+// Proteksi jika URL tujuan kosong
+if (empty($target['url'])) {
+    render_error(
+        500,
+        'Target Redirect Kosong',
+        'Konfigurasi redirect belum diatur.',
+        'Periksa REDIRECT_MAP di redirect.php.'
+    );
+    exit;
+}
+
 $sep       = strpos($target['url'], '?') !== false ? '&' : '?';
 $final_url = $target['url'] . $sep . 'sso=ok&src=superapp';
 
